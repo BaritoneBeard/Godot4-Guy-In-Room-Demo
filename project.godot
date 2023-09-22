@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Godot Games"
+config/name="Man_in_room"
 run/main_scene="res://man_in_room_demo.tscn"
 config/features=PackedStringArray("4.1", "Mobile")
 config/icon="res://icon.svg"
