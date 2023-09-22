@@ -1,6 +1,5 @@
-[gd_scene load_steps=35 format=3 uid="uid://cxa4a4h0xxj8y"]
+[gd_scene load_steps=34 format=3 uid="uid://cxa4a4h0xxj8y"]
 
-[ext_resource type="Script" path="res://Player/PlayerSM.gd" id="1_8ldmt"]
 [ext_resource type="Script" path="res://Player/Player.gd" id="1_60umu"]
 [ext_resource type="Texture2D" uid="uid://csolju44iqspu" path="res://Assets/Asset Packs 1-3 (final)/Asset Packs 1-3 (final)/Asset Pack-V1/Sprite Sheets/Character Idle 48x48.png" id="2_2p3gi"]
 [ext_resource type="Texture2D" uid="uid://2qy4thrmak0w" path="res://Assets/Asset Packs 1-3 (final)/Asset Packs 1-3 (final)/Asset Pack-V1/Sprite Sheets/player jump 48x48.png" id="3_ojafx"]
@@ -332,7 +331,6 @@ shape = SubResource("CapsuleShape2D_v257c")
 position = Vector2(1, 0)
 sprite_frames = SubResource("SpriteFrames_bbxii")
 animation = &"Jump"
-frame = 1
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(1.81, 1.81)
@@ -342,7 +340,3 @@ autoplay = "Idle"
 libraries = {
 "": SubResource("AnimationLibrary_rdjsh")
 }
-
-[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("player")]
-script = ExtResource("1_8ldmt")
-player = NodePath("..")
