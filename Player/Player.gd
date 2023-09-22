@@ -68,7 +68,6 @@ func _get_transition(delta):
 			elif velocity.x != 0:
 				return states.run
 		states.run:
-			print(velocity.x)
 			if !is_on_floor():
 				if velocity.y < 0:
 					return states.jump
