@@ -5,7 +5,7 @@ var state = null : set = set_state, get = get_state
 var previous_state = null
 var states = {}
 
-@onready var parent = get_parent()
+# @onready var parent = get_parent()
 
 func _physics_process(delta):
 	if state != null:

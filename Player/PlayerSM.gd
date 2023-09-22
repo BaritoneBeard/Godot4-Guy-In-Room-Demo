@@ -1,10 +1,9 @@
 extends 'res://FSM.gd'
 
-@onready var player_node = get_parent()
-
+@export var player: CharacterBody2D
 
 func _ready():
-	print(player_node.name)
+	print(player.name)
 	add_state('idle')
 	add_state('run')
 	add_state('jump')
@@ -13,52 +12,52 @@ func _ready():
 	
 	
 func _state_logic(delta):
-	player_node._handle_move_input()
-	player_node._apply_gravity(delta)
-	player_node._apply_movement()
+	player._handle_move_input()
+	player._apply_gravity(delta)
+	player._apply_movement()
 	
 func _get_transition(delta):
 	match state:
 		states.idle:
-			if !player_node.is_on_floor():
-				if player_node.velocity.y < 0:
+			if !player.is_on_floor():
+				if player.velocity.y < 0:
 					return states.jump
-				elif player_node.velocity.y > 0:
+				elif player.velocity.y > 0:
 					return states.fall
-				elif player_node.velocity.x != 0:
+				elif player.velocity.x != 0:
 					return states.run
 		states.run:
-			if !player_node.is_on_floor():
-				if player_node.velocity.y < 0:
+			if !player.is_on_floor():
+				if player.velocity.y < 0:
 					return states.jump
-				elif player_node.velocity.y > 0:
+				elif player.velocity.y > 0:
 					return states.fall
-				elif player_node.velocity.x == 0:
+				elif player.velocity.x == 0:
 					return states.idle
 		states.jump:
-			if player_node.is_on_floor():
+			if player.is_on_floor():
 				return states.idle
-			elif player_node.velocity.y >= 0:
+			elif player.velocity.y >= 0:
 				return states.fall
 		states.fall:
-			if player_node.is_on_floor():
+			if player.is_on_floor():
 				return states.idle
-			elif player_node.velocity.y < 0:
+			elif player.velocity.y < 0:
 				return states.jump
 				
 	return null
 				
 func _enter_state(new_state, old_state):
-	print(player_node)
-	match new_state:
-		states.idle:
-			player_node.anim.play('Idle')
-		states.run:
-			player_node.anim.play('Run')
-		states.jump:
-			player_node.anim.play('Jump')
-		states.fall:
-			player_node.anim.play('Fall')
+	print(player)
+#	match new_state:
+#		states.idle:
+#			player.anim.play('Idle')
+#		states.run:
+#			player.anim.play('Run')
+#		states.jump:
+#			player.anim.play('Jump')
+#		states.fall:
+#			player.anim.play('Fall')
 	
 
 func _exit_state(old_state, new_state):

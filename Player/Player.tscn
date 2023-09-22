@@ -343,5 +343,6 @@ libraries = {
 "": SubResource("AnimationLibrary_rdjsh")
 }
 
-[node name="StateMachine" type="Node" parent="."]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("player")]
 script = ExtResource("1_8ldmt")
+player = NodePath("..")
