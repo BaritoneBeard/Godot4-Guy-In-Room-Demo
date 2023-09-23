@@ -4,6 +4,11 @@
 
 <h2> Changelog </h2>
 
+<h3> 0.0.5 </h3>
+- Added Kinematics to physics
+<br>
+- Added Tileset to room
+
 <h3> 0.0.4 </h3>
 -Added wall slides and wall jumps
 <br>
