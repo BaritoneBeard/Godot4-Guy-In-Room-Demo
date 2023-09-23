@@ -60,6 +60,18 @@ func _handle_dash():
 		velocity.x += (face_direction*DASH_VELOCITY)
 		await dash_cooldown.timeout 
 		_slow(velocity.x, old_speed, DASH_VELOCITY)
+		
+		
+func _get_h_weight():
+	if is_on_floor():
+		return 0.2
+	else:
+		if move_direction == 0:
+			return 0.02
+		elif move_direction == sign(velocity.x) && abs(velocity.x) > SPEED:
+			return 0.0
+		else:
+			return 0.1
 	
 func _slow(from = velocity.x, to = 0, rate = SPEED):
 	velocity.x = move_toward(from, to, rate)
@@ -103,21 +115,20 @@ func _update_move_direction():
 		face_direction = move_direction		
 
 func _apply_movement():
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
 	
-
 	if move_direction == -1:
 		sprite.flip_h = true
 	elif move_direction == 1:
 		sprite.flip_h = false
 		
-	if move_direction:
-		velocity.x = move_direction * SPEED
+	velocity.x = lerp(velocity.x, SPEED*move_direction, _get_h_weight())
+	print(velocity.x)
 	
-	elif is_on_floor():
+	if abs(int(velocity.x)) <= UNIT_SIZE:
+		velocity.x = 0
+	
+	if is_on_floor():
 		dashed = false
-		_slow()
 	
 	if state == states.wall_slide:
 		if Input.is_action_just_pressed('ui_up'):

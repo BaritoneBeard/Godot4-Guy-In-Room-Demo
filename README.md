@@ -4,6 +4,9 @@
 
 <h2> Changelog </h2>
 
+<h3> 0.0.7 </h3>
+- Added motion smoothing to movement
+
 <h3> 0.0.6 </h3>
 - Added midair dashing
 
