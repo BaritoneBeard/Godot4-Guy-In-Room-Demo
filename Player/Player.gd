@@ -4,7 +4,7 @@ extends CharacterBody2D
 # No idea if this is true V
 const UNIT_SIZE = 32
 const SPEED = (15 * UNIT_SIZE)
-const DASH_VELOCITY = 250.0
+const DASH_VELOCITY = SPEED
 # TODO: These next two need refactors
 const JUMP_VELOCITY = -(12 * UNIT_SIZE)
 const WALL_JUMP_VELOCITY = Vector2(SPEED/2,JUMP_VELOCITY)
@@ -33,6 +33,7 @@ var jump_duration = 0.5
 
 @onready var wall_slide_cooldown = $WallSlideCooldown
 @onready var wall_slide_sticky_timer = $WallSlideStickyTimer
+@onready var dash_cooldown = $DashTimer
 
 func _apply_gravity(delta):
 	# Add the gravity.
@@ -50,6 +51,18 @@ func _handle_wall_slide_sticking():
 			wall_slide_sticky_timer.start()
 		else:
 			wall_slide_sticky_timer.stop()
+			
+func _handle_dash():
+	var old_speed = velocity.x
+	if dash_cooldown.is_stopped() && dashed == false:
+		set_state(states.dashing)
+		dash_cooldown.start()
+		velocity.x += (face_direction*DASH_VELOCITY)
+		await dash_cooldown.timeout 
+		_slow(velocity.x, old_speed, DASH_VELOCITY)
+	
+func _slow(from = velocity.x, to = 0, rate = SPEED):
+	velocity.x = move_toward(from, to, rate)
 	
 func _jump():
 	velocity.y =max_jump_velocity
@@ -81,15 +94,7 @@ func _handle_move_input():
 		
 	# Not working right now, fix it later
 	if Input.is_action_just_pressed('ui_select'):
-		print('pressed')
-		if dashed == false:
-			dashed = true
-			var old_speed = velocity.x
-			print(velocity.x)
-			velocity.x += (face_direction*DASH_VELOCITY)
-			print(velocity.x)
-			velocity.x = move_toward(velocity.x, old_speed, DASH_VELOCITY)
-			print('dashed')
+		_handle_dash()
 		
 		
 func _update_move_direction():
@@ -109,10 +114,10 @@ func _apply_movement():
 		
 	if move_direction:
 		velocity.x = move_direction * SPEED
-		
-	# Jump arc after wall jump
-	elif previous_state != states.wall_slide && previous_state != states.jump:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+	
+	elif is_on_floor():
+		dashed = false
+		_slow()
 	
 	if state == states.wall_slide:
 		if Input.is_action_just_pressed('ui_up'):
@@ -121,7 +126,6 @@ func _apply_movement():
 			set_state(states.jump)
 			
 		
-	
 	move_and_slide()
 	
 func _update_wall_direction():
@@ -147,6 +151,7 @@ func _ready():
 	add_state('jump')
 	add_state('fall')
 	add_state('wall_slide')
+	add_state('dashing')
 	call_deferred('set_state', states.idle)
 	
 	gravity = 2 * max_jump_height / pow(jump_duration, 2)
@@ -192,7 +197,7 @@ func _get_transition(delta):
 			elif velocity.y >= 0:
 				return states.fall
 		states.fall:
-			if wall_direction != 0:
+			if wall_direction != 0 && wall_slide_cooldown.is_stopped():
 				return states.wall_slide
 			elif is_on_floor():
 				return states.idle
@@ -203,16 +208,27 @@ func _get_transition(delta):
 				return states.idle
 			elif wall_direction == 0:
 				return states.fall
+		states.dashing:
+			if is_on_floor():
+				if velocity.x == 0:
+					return states.idle
+				else:
+					return states.run
+			elif dash_cooldown.is_stopped():
+				if velocity.y < 0:
+					return states.jump
+				else:
+					if wall_direction == 0:
+						return states.fall
+				
 	return null
 				
 				
 func _enter_state(new_state, old_state):
 	match new_state:
 		states.idle:
-			dashed = false
 			anim.play('Idle')
 		states.run:
-			dashed = false
 			anim.play('Run')
 		states.jump:
 			anim.play('Jump')
@@ -221,9 +237,12 @@ func _enter_state(new_state, old_state):
 		states.wall_slide:
 			dashed = false
 			anim.play('WallSlide')
+		states.dashing:
+			dashed = true
 	
 
 func _exit_state(old_state, new_state):
+	print('old_state:', states.keys()[old_state])
 	match old_state:
 		states.wall_slide:
 			wall_slide_cooldown.start()
