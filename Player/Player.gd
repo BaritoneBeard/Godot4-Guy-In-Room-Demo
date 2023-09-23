@@ -1,16 +1,28 @@
 class_name Player
 extends CharacterBody2D
 
-const SPEED = 500.0
-const JUMP_VELOCITY = -400.0
-const WALL_JUMP_VELOCITY = Vector2(SPEED/2, JUMP_VELOCITY)
+# No idea if this is true V
+const UNIT_SIZE = 32
+const SPEED = (15 * UNIT_SIZE)
+const DASH_VELOCITY = 250.0
+# TODO: These next two need refactors
+const JUMP_VELOCITY = -(12 * UNIT_SIZE)
+const WALL_JUMP_VELOCITY = Vector2(SPEED/2,JUMP_VELOCITY)
 
 var state = null : set = set_state, get = get_state
 var previous_state = null
 var states = {}
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity") * 1.5
+var gravity = ProjectSettings.get_setting("physics/2d/default_gravity") 
 var wall_direction = 1
 var move_direction
+var face_direction = 1
+var dashed = false
+
+var max_jump_velocity
+var min_jump_velocity 
+var max_jump_height = 2.25 * UNIT_SIZE
+var min_jump_height = 0.8 * UNIT_SIZE
+var jump_duration = 0.5
 
 @onready var anim = $AnimationPlayer
 @onready var label = $Label
@@ -40,7 +52,7 @@ func _handle_wall_slide_sticking():
 			wall_slide_sticky_timer.stop()
 	
 func _jump():
-	velocity.y = JUMP_VELOCITY
+	velocity.y =max_jump_velocity
 	
 func _fast_fall():
 	velocity.y = -JUMP_VELOCITY
@@ -49,6 +61,7 @@ func _wall_jump():
 	var wall_jump_velocity = WALL_JUMP_VELOCITY
 	wall_jump_velocity.x *= -wall_direction
 	velocity = wall_jump_velocity
+	face_direction *= -1
 
 func _on_WallSlideStickTimer_timeout():
 	if state == states.wall_slide:
@@ -59,11 +72,30 @@ func _handle_move_input():
 	if Input.is_action_just_pressed("ui_up") and is_on_floor():
 		_jump()
 		
+	# Different y values indicate a minimum jump height
+	if Input.is_action_just_released('ui_up') && velocity.y < min_jump_velocity:
+		velocity.y = min_jump_velocity
+		
 	if Input.is_action_just_pressed("ui_down") and not is_on_floor():
 		_fast_fall()
 		
+	# Not working right now, fix it later
+	if Input.is_action_just_pressed('ui_select'):
+		print('pressed')
+		if dashed == false:
+			dashed = true
+			var old_speed = velocity.x
+			print(velocity.x)
+			velocity.x += (face_direction*DASH_VELOCITY)
+			print(velocity.x)
+			velocity.x = move_toward(velocity.x, old_speed, DASH_VELOCITY)
+			print('dashed')
+		
+		
 func _update_move_direction():
-	move_direction = Input.get_axis("ui_left", "ui_right")		
+	move_direction = Input.get_axis("ui_left", "ui_right")
+	if move_direction != 0:
+		face_direction = move_direction		
 
 func _apply_movement():
 	# Get the input direction and handle the movement/deceleration.
@@ -78,6 +110,7 @@ func _apply_movement():
 	if move_direction:
 		velocity.x = move_direction * SPEED
 		
+	# Jump arc after wall jump
 	elif previous_state != states.wall_slide && previous_state != states.jump:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	
@@ -115,6 +148,10 @@ func _ready():
 	add_state('fall')
 	add_state('wall_slide')
 	call_deferred('set_state', states.idle)
+	
+	gravity = 2 * max_jump_height / pow(jump_duration, 2)
+	max_jump_velocity = -sqrt(2 * gravity * max_jump_height)
+	min_jump_velocity = -sqrt(2 * gravity * min_jump_height)
 	
 	
 func _state_logic(delta):
@@ -172,14 +209,17 @@ func _get_transition(delta):
 func _enter_state(new_state, old_state):
 	match new_state:
 		states.idle:
+			dashed = false
 			anim.play('Idle')
 		states.run:
+			dashed = false
 			anim.play('Run')
 		states.jump:
 			anim.play('Jump')
 		states.fall:
 			anim.play('Fall')
 		states.wall_slide:
+			dashed = false
 			anim.play('WallSlide')
 	
 
