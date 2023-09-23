@@ -4,6 +4,9 @@
 
 <h2> Changelog </h2>
 
+<h3> 0.0.6 </h3>
+- Added midair dashing
+
 <h3> 0.0.5 </h3>
 - Added Kinematics to physics
 <br>
