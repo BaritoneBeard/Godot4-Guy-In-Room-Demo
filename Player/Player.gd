@@ -17,6 +17,7 @@ var wall_direction = 1
 var move_direction
 var face_direction = 1
 var dashed = false
+var jumping = false
 
 var max_jump_velocity
 var min_jump_velocity 
@@ -34,6 +35,8 @@ var jump_duration = 0.3
 @onready var wall_slide_cooldown = $WallSlideCooldown
 @onready var wall_slide_sticky_timer = $WallSlideStickyTimer
 @onready var dash_cooldown = $DashTimer
+@onready var coyote_time = $CoyoteTime
+@onready var jump_buffer = $JumpBuffer
 
 func _apply_gravity(delta):
 	# Add the gravity.
@@ -94,8 +97,12 @@ func _on_WallSlideStickTimer_timeout():
 	
 func _handle_move_input():
 	# Handle Jump.
-	if Input.is_action_just_pressed("ui_up") and is_on_floor():
-		_jump()
+	if Input.is_action_just_pressed("ui_up"):
+		if is_on_floor() || !coyote_time.is_stopped():
+			coyote_time.stop()
+			_jump()
+		else:
+			jump_buffer.start()
 		
 	# Different y values indicate a minimum jump height
 	if Input.is_action_just_released('ui_up') && velocity.y < min_jump_velocity:
@@ -120,15 +127,17 @@ func _apply_movement():
 		sprite.flip_h = true
 	elif move_direction == 1:
 		sprite.flip_h = false
-		
-	velocity.x = lerp(velocity.x, SPEED*move_direction, _get_h_weight())
-	print(velocity.x)
 	
+	velocity.x = lerp(velocity.x, SPEED*move_direction, _get_h_weight())
 	if abs(int(velocity.x)) <= UNIT_SIZE:
 		velocity.x = 0
-	
+			
 	if is_on_floor():
 		dashed = false
+		jumping = false
+		if !jump_buffer.is_stopped():
+			jump_buffer.stop()
+			_jump()
 	
 	if state == states.wall_slide:
 		if Input.is_action_just_pressed('ui_up'):
@@ -242,8 +251,11 @@ func _enter_state(new_state, old_state):
 		states.run:
 			anim.play('Run')
 		states.jump:
+			jumping = true
 			anim.play('Jump')
 		states.fall:
+			if !jumping:
+				coyote_time.start()
 			anim.play('Fall')
 		states.wall_slide:
 			dashed = false
@@ -253,7 +265,6 @@ func _enter_state(new_state, old_state):
 	
 
 func _exit_state(old_state, new_state):
-	print('old_state:', states.keys()[old_state])
 	match old_state:
 		states.wall_slide:
 			wall_slide_cooldown.start()
