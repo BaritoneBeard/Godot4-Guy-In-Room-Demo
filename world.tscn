@@ -9,6 +9,7 @@ size = Vector2(280.996, 57.7325)
 size = Vector2(60.6774, 173.86)
 
 [node name="World" type="Node2D"]
+scale = Vector2(0.855, 0.855)
 
 [node name="Player" parent="." instance=ExtResource("1_causl")]
 position = Vector2(571, 436)

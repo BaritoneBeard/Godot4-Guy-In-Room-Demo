@@ -341,7 +341,7 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id="Animation_ixssl"]
 resource_name = "WallSlide"
-length = 0.1
+length = 0.3
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -361,7 +361,7 @@ tracks/1/path = NodePath("AnimatedSprite2D:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.1),
+"times": PackedFloat32Array(0, 0.1, 0.2),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [0, 1, 2]
@@ -428,11 +428,3 @@ target_position = Vector2(9, 0)
 [node name="RightWallRaycast2" type="RayCast2D" parent="WallRaycasts/RightWallRaycasts"]
 position = Vector2(5, 12)
 target_position = Vector2(9, 0)
-
-[node name="WallSlideCooldown" type="Timer" parent="."]
-wait_time = 0.2
-one_shot = true
-
-[node name="WallSlideStickyTimer" type="Timer" parent="."]
-wait_time = 0.2
-one_shot = true
