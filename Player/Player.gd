@@ -1,29 +1,27 @@
 class_name Player
 extends CharacterBody2D
 
-# No idea if this is true V
 const UNIT_SIZE = 32
-const SPEED = (15 * UNIT_SIZE)
+const SPEED = (9 * UNIT_SIZE)
 const DASH_VELOCITY = SPEED
-# TODO: These next two need refactors
 const JUMP_VELOCITY = -(12 * UNIT_SIZE)
-const WALL_JUMP_VELOCITY = Vector2(SPEED,JUMP_VELOCITY)
+const WALL_JUMP_VELOCITY = Vector2(SPEED, JUMP_VELOCITY)
 
-var state = null : set = set_state, get = get_state
-var previous_state = null
-var states = {}
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity") 
-var wall_direction = 1
-var move_direction
-var face_direction = 1
-var dashed = false
-var jumping = false
-
+# Affects gravity variables
 var max_jump_velocity
 var min_jump_velocity 
 var max_jump_height = 2.25 * UNIT_SIZE
 var min_jump_height = 0.8 * UNIT_SIZE
-var jump_duration = 0.3
+var jump_duration = 0.25
+
+var state = null : set = set_state, get = get_state
+var previous_state = null
+var states = {}
+var gravity 
+var wall_direction = 1
+var move_direction
+var dashed = false
+var jumping = false
 
 @onready var anim = $AnimationPlayer
 @onready var label = $Label
@@ -60,7 +58,7 @@ func _handle_dash():
 	if dash_cooldown.is_stopped() && dashed == false:
 		set_state(states.dashing)
 		dash_cooldown.start()
-		velocity.x += (face_direction*DASH_VELOCITY)
+		velocity.x += (sign(velocity.x)*DASH_VELOCITY)
 		await dash_cooldown.timeout 
 		_slow(velocity.x, old_speed, DASH_VELOCITY)
 		
@@ -89,7 +87,6 @@ func _wall_jump():
 	var wall_jump_velocity = WALL_JUMP_VELOCITY
 	wall_jump_velocity.x *= -wall_direction
 	velocity = wall_jump_velocity
-	face_direction *= -1
 
 func _on_WallSlideStickTimer_timeout():
 	if state == states.wall_slide:
@@ -97,7 +94,7 @@ func _on_WallSlideStickTimer_timeout():
 	
 func _handle_move_input():
 	# Handle Jump.
-	if Input.is_action_just_pressed("ui_up"):
+	if Input.is_action_just_pressed("jump"):
 		if is_on_floor() || !coyote_time.is_stopped():
 			coyote_time.stop()
 			_jump()
@@ -105,21 +102,19 @@ func _handle_move_input():
 			jump_buffer.start()
 		
 	# Different y values indicate a minimum jump height
-	if Input.is_action_just_released('ui_up') && velocity.y < min_jump_velocity:
+	if Input.is_action_just_released('jump') && velocity.y < min_jump_velocity:
 		velocity.y = min_jump_velocity
 		
 	if Input.is_action_just_pressed("ui_down") and not is_on_floor():
 		_fast_fall()
 		
 	# Not working right now, fix it later
-	if Input.is_action_just_pressed('ui_select'):
+	if Input.is_action_just_pressed('dash'):
 		_handle_dash()
 		
 		
 func _update_move_direction():
 	move_direction = Input.get_axis("ui_left", "ui_right")
-	if move_direction != 0:
-		face_direction = move_direction		
 
 func _apply_movement():
 	
@@ -129,7 +124,7 @@ func _apply_movement():
 		sprite.flip_h = false
 	
 	velocity.x = lerp(velocity.x, SPEED*move_direction, _get_h_weight())
-	if abs(int(velocity.x)) <= UNIT_SIZE:
+	if abs(int(velocity.x)) <= (SPEED / UNIT_SIZE):
 		velocity.x = 0
 			
 	if is_on_floor():
@@ -140,7 +135,7 @@ func _apply_movement():
 			_jump()
 	
 	if state == states.wall_slide:
-		if Input.is_action_just_pressed('ui_up'):
+		if Input.is_action_just_pressed('jump'):
 			sprite.flip_h = !sprite.flip_h
 			_wall_jump()
 			set_state(states.jump)

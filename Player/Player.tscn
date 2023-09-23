@@ -383,6 +383,7 @@ script = ExtResource("1_60umu")
 position = Vector2(0, 5)
 sprite_frames = SubResource("SpriteFrames_bbxii")
 animation = &"Jump"
+frame = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1, 7)
@@ -392,7 +393,8 @@ shape = SubResource("CapsuleShape2D_v257c")
 zoom = Vector2(1.81, 1.81)
 limit_left = 0
 limit_top = 0
-limit_right = 850
+limit_right = 1050
+limit_bottom = 500
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "Idle"
@@ -441,6 +443,7 @@ wait_time = 0.2
 one_shot = true
 
 [node name="CoyoteTime" type="Timer" parent="."]
+wait_time = 0.1
 
 [node name="JumpBuffer" type="Timer" parent="."]
 wait_time = 0.1

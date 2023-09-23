@@ -4,6 +4,13 @@
 
 <h2> Changelog </h2>
 
+<h3> 0.0.8 </h3>
+- Added Coyote Time and Jump Buffering to make movement feel more responsive
+<br>
+- Added Inputs for gamepad/controller
+<br>
+- Rearranged some things in The Room
+
 <h3> 0.0.7 </h3>
 - Added motion smoothing to movement
 <br>
