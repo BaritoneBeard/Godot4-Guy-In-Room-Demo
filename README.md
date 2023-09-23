@@ -6,13 +6,15 @@
 
 <h3> 0.0.4 </h3>
 -Added wall slides and wall jumps
--Adjust Gravity
+<br>
+-Adjusted Gravity
 
 <h3> 0.0.3 </h3>
 -Added Finite State Automata (State Machine) to code logic, allowing for more complex behaviors
 
 <h3> 0.0.2 </h3>
 -Changed player sprite to a more sophisticated model capable of more complex animation.
+<br>
 -Removed Assets not being used
 
 <h3> 0.0.1 </h3>
