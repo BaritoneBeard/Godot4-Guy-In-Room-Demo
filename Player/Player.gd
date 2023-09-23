@@ -7,7 +7,7 @@ const SPEED = (15 * UNIT_SIZE)
 const DASH_VELOCITY = SPEED
 # TODO: These next two need refactors
 const JUMP_VELOCITY = -(12 * UNIT_SIZE)
-const WALL_JUMP_VELOCITY = Vector2(SPEED/2,JUMP_VELOCITY)
+const WALL_JUMP_VELOCITY = Vector2(SPEED,JUMP_VELOCITY)
 
 var state = null : set = set_state, get = get_state
 var previous_state = null
@@ -22,7 +22,7 @@ var max_jump_velocity
 var min_jump_velocity 
 var max_jump_height = 2.25 * UNIT_SIZE
 var min_jump_height = 0.8 * UNIT_SIZE
-var jump_duration = 0.5
+var jump_duration = 0.3
 
 @onready var anim = $AnimationPlayer
 @onready var label = $Label

@@ -6,6 +6,8 @@
 
 <h3> 0.0.7 </h3>
 - Added motion smoothing to movement
+<br>
+- Added stuff to The Room
 
 <h3> 0.0.6 </h3>
 - Added midair dashing
