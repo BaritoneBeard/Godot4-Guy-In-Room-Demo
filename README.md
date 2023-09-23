@@ -1,6 +1,6 @@
 # Godot4-Guy-In-Room-Demo
 
-<h4> A silly little game about just that: a Guy in a Room. Focussed on fun and snappy movement. </h4>
+<h4> A silly little game about just that: a Guy in a Room. Focused on fun and snappy movement. </h4>
 
 <h2> Changelog </h2>
 
