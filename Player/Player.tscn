@@ -446,4 +446,4 @@ one_shot = true
 wait_time = 0.1
 
 [node name="JumpBuffer" type="Timer" parent="."]
-wait_time = 0.1
+wait_time = 0.05

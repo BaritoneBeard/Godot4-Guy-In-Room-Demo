@@ -7,17 +7,25 @@ script = ExtResource("1_mp0aw")
 
 [node name="Start" type="Button" parent="."]
 offset_left = 374.0
-offset_top = 80.0
+offset_top = 60.0
 offset_right = 674.0
-offset_bottom = 218.0
+offset_bottom = 198.0
 text = "Play"
 
-[node name="Quit" type="Button" parent="."]
+[node name="Remap" type="Button" parent="."]
 offset_left = 377.0
-offset_top = 297.0
-offset_right = 684.0
-offset_bottom = 447.0
+offset_top = 247.0
+offset_right = 677.0
+offset_bottom = 385.0
+text = "Remap Controls"
+
+[node name="Quit" type="Button" parent="."]
+offset_left = 374.0
+offset_top = 436.0
+offset_right = 681.0
+offset_bottom = 586.0
 text = "Quit"
 
 [connection signal="pressed" from="Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="Remap" to="." method="_on_remap_pressed"]
 [connection signal="pressed" from="Quit" to="." method="_on_quit_pressed"]

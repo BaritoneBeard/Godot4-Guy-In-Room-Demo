@@ -3,9 +3,9 @@ extends CharacterBody2D
 
 const UNIT_SIZE = 32
 const SPEED = (9 * UNIT_SIZE)
-const DASH_VELOCITY = SPEED
+const DASH_VELOCITY = SPEED*2
 const JUMP_VELOCITY = -(12 * UNIT_SIZE)
-const WALL_JUMP_VELOCITY = Vector2(SPEED, JUMP_VELOCITY)
+const WALL_JUMP_VELOCITY = Vector2(SPEED, JUMP_VELOCITY)*1.3
 
 # Affects gravity variables
 var max_jump_velocity
@@ -22,6 +22,7 @@ var wall_direction = 1
 var move_direction
 var dashed = false
 var jumping = false
+var double_jump = false
 
 @onready var anim = $AnimationPlayer
 @onready var label = $Label
@@ -58,14 +59,20 @@ func _handle_dash():
 	if dash_cooldown.is_stopped() && dashed == false:
 		set_state(states.dashing)
 		dash_cooldown.start()
-		velocity.x += (sign(velocity.x)*DASH_VELOCITY)
+		var dash_vector = Vector2.ZERO
+		dash_vector.x = move_direction
+		dash_vector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+		dash_vector = dash_vector.normalized()
+		#velocity.x += (sign(velocity.x)*DASH_VELOCITY)
+		velocity = dash_vector*DASH_VELOCITY
 		await dash_cooldown.timeout 
 		_slow(velocity.x, old_speed, DASH_VELOCITY)
 		
 		
+	# Adjusts the rate at which _slow() is applied
 func _get_h_weight():
-	if is_on_floor():
-		return 0.2
+	if is_on_floor() && move_direction == 0:
+		return 0.5
 	else:
 		if move_direction == 0:
 			return 0.02
@@ -94,21 +101,26 @@ func _on_WallSlideStickTimer_timeout():
 	
 func _handle_move_input():
 	# Handle Jump.
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed('jump'):
 		if is_on_floor() || !coyote_time.is_stopped():
 			coyote_time.stop()
 			_jump()
+		elif jumping == true && double_jump == false:
+			double_jump = true
+			_jump()
 		else:
 			jump_buffer.start()
+
+			
 		
-	# Different y values indicate a minimum jump height
 	if Input.is_action_just_released('jump') && velocity.y < min_jump_velocity:
 		velocity.y = min_jump_velocity
 		
+	# Might not want this depending on game-feel
 	if Input.is_action_just_pressed("ui_down") and not is_on_floor():
-		_fast_fall()
-		
-	# Not working right now, fix it later
+		#_fast_fall()
+		pass
+
 	if Input.is_action_just_pressed('dash'):
 		_handle_dash()
 		
@@ -179,7 +191,8 @@ func _state_logic(delta):
 	_update_wall_direction()
 	if state != states.wall_slide:
 		_handle_move_input()
-	_apply_gravity(delta)
+	if state != states.dashing:
+		_apply_gravity(delta)
 	if state == states.wall_slide:
 		_cap_gravity_wall_slide()
 		_handle_wall_slide_sticking()
@@ -247,6 +260,7 @@ func _enter_state(new_state, old_state):
 			anim.play('Run')
 		states.jump:
 			jumping = true
+			double_jump = false
 			anim.play('Jump')
 		states.fall:
 			if !jumping:

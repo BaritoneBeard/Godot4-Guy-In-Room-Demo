@@ -1,0 +1,86 @@
+[gd_scene load_steps=2 format=3 uid="uid://c18in0ws32p53"]
+
+[ext_resource type="Script" path="res://Button.gd" id="1_liknl"]
+
+[node name="Control" type="Control"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 3
+anchors_preset = 0
+offset_bottom = 100.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 412.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "left"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "right"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "jump"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "dash"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+alignment = 2
+
+[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+script = ExtResource("1_liknl")
+action = "ui_left"
+
+[node name="Button2" type="Button" parent="HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+script = ExtResource("1_liknl")
+action = "ui_right"
+
+[node name="Button3" type="Button" parent="HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+script = ExtResource("1_liknl")
+action = "jump"
+
+[node name="Button4" type="Button" parent="HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+script = ExtResource("1_liknl")
+action = "dash"
+
+[node name="Done" type="Button" parent="."]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 578.0
+offset_right = 130.0
+offset_bottom = 638.0
+text = "DONE"
+
+[connection signal="pressed" from="Done" to="HBoxContainer/VBoxContainer2/Button" method="_on_done_pressed"]
