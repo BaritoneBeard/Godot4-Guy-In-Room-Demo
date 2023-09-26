@@ -2,7 +2,27 @@
 
 <h4> A silly little game about just that: a Guy in a Room. Focused on fun and snappy movement. </h4>
 
+<h2> Controls </h2>
+
+`Left Arrow`, `A key`, `Left Joystick`: Move left
+<br>
+`Right Arrow`, `D key`, `Right Joystick`: Move right
+<br>
+`Space`, `Left / Right Trigger`: Jump
+<br>
+`Shift / Ctrl`, `A/X Face Button`: Dash
+<br>
+
+* Unlike movement, the dash can be performed in any direction 2D direction
+
 <h2> Changelog </h2>
+
+<h3> 0.1.0 </h3>
+-Guy is in a room
+<br>
+-Guy can double jump, dash, and wall jump to traverse objects
+<br>
+-Controller and keyboard inputs compatible.
 
 <h3> 0.0.8 </h3>
 - Added Coyote Time and Jump Buffering to make movement feel more responsive
